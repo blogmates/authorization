@@ -15,12 +15,11 @@ jobs:
 
       - name: Read version from file
         run: |
-          VERSION=$(cat VERSION)
-          echo "Version: $VERSION"
-          echo "::set-output name=RELEASE_VERSION::$VERSION"
+          export RELEASE_VERSION=$(cat VERSION)
+          echo "Version: $RELEASE_VERSION"
 
       - name: Build Docker image
-        run: docker build -t blogmates/authorisation:${{ steps.version.outputs.RELEASE_VERSION }} .
+        run: docker build -t blogmates/authorisation:${$RELEASE_VERSION} .
 
   push:
     needs: build
@@ -31,4 +30,4 @@ jobs:
         run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin artifactory.example.com
 
       - name: Push Docker image
-        run: docker push blogmates/authorisation:${{ steps.version.outputs.RELEASE_VERSION }}
+        run: docker push blogmates/authorisation:${$RELEASE_VERSION}
