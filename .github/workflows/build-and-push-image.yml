@@ -13,13 +13,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Read version from file
+      - name: Read version from file and set as environment variable
         run: |
-          export RELEASE_VERSION=$(cat VERSION)
+          echo "RELEASE_VERSION=$(cat VERSION)" >> $GITHUB_ENV
           echo "Version: $RELEASE_VERSION"
 
       - name: Build Docker image
-        run: docker build -t "blogmates/authorisation:${RELEASE_VERSION}" .
+        run: docker build -t "blogmates/authorisation:${{ env.RELEASE_VERSION }}" .
 
   push:
     needs: build
@@ -30,4 +30,4 @@ jobs:
         run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin artifactory.example.com
 
       - name: Push Docker image
-        run: docker push "blogmates/authorisation:${RELEASE_VERSION}"
+        run: docker push "blogmates/authorisation:${{ env.RELEASE_VERSION }}"
