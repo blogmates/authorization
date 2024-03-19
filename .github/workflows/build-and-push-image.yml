@@ -1,0 +1,34 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Read version from file
+        run: |
+          VERSION=$(cat VERSION)
+          echo "Version: $VERSION"
+          echo "::set-output name=RELEASE_VERSION::$VERSION"
+
+      - name: Build Docker image
+        run: docker build -t blogmates/authorisation:${{ steps.version.outputs.RELEASE_VERSION }} .
+
+  push:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Log in to Docker registry
+        run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin artifactory.example.com
+
+      - name: Push Docker image
+        run: docker push blogmates/authorisation:${{ steps.version.outputs.RELEASE_VERSION }}
