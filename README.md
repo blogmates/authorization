@@ -8,7 +8,14 @@ chmod +x scripts/create_venv.sh
 
 ./create_venv.sh
 ```
-### Start the venv
+
+Start the app:
+
+```
+python -m flask run app/main.py
+```
+
+Start the venv:
 
 Linux/MacOs
 ```
@@ -19,6 +26,12 @@ Windows
 
 ```
 .\venv\Scripts\Activate.ps1
+```
+
+Start the app:
+
+```
+python -m flask run app/main.py
 ```
 
 ### Start the app
